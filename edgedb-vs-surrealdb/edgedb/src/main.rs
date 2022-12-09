@@ -1,10 +1,14 @@
+use axum::{routing::get, Router};
 use std::net::SocketAddr;
 
-use axum::Router;
+mod controller;
+mod error;
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/", axum::handler::get(|| async { "Hello, World!" }));
+    let app = Router::new()
+        .route("/", get(|| async { "Hello, World!" }))
+        .route_service("/stars/:user_name", get(controller::get_stars_of_user));
 
     let address = SocketAddr::from(([127, 0, 0, 1], 1337));
 

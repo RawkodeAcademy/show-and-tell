@@ -1,12 +1,12 @@
 # EdgeDB
 
 ```shell
-cargo run
+PERSONAL_GITHUB_TOKEN=<personal github token> cargo run
 ```
 
 ## Testing
 
-* `hurl check.hurl` to check all endpoints
+* `curl http://localhost:1337/stars/icepuma` to get all the stars of a user
 
 ## Useful tooling
 
