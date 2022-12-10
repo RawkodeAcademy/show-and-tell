@@ -26,6 +26,10 @@ async fn main() -> anyhow::Result<()> {
     let app = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
         .route_service("/repository", get(controller::get_all_repositories))
+        .route_service(
+            "/repository/by/language",
+            get(controller::get_all_repositories_by_language),
+        )
         .route_service("/repository/:owner/:repo", post(controller::add_repository))
         .layer(Extension(shared_state));
 
