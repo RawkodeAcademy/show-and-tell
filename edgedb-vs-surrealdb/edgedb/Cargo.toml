@@ -9,3 +9,10 @@ tokio = { version = "1.23.0", features = ["full"] }
 octocrab = "0.17.0"
 anyhow = "1.0.66"
 reqwest = "0.11.13"
+edgedb-tokio = "0.3.0"
+edgedb-derive = "0.4.0"
+edgedb-protocol = "0.4.0"
+serde = "1.0.149"
+serde_json = "1.0.89"
+serde_derive = "1.0.149"
+uuid = { version = "1.2.2", features = ["serde", "v4"] }
