@@ -6,7 +6,12 @@ PERSONAL_GITHUB_TOKEN=<personal github token> cargo run
 
 ## Testing
 
-* `curl http://localhost:1337/stars/icepuma` to get all the stars of a user
+* `./setup.sh` to init project and run migrations
+* `curl -XPOST http://localhost:1337/repository/comtrya/comtrya` to add `comtrya` to the database
+  * `curl -XPOST http://localhost:1337/repository/<owner>/<repo>`
+* `curl http://localhost:1337/repository` to get all repositories
+* `curl http://localhost:1337/repository/by/language` to get all repositories grouped by language
+* `./teardown.sh` to drop the database
 
 ## Useful tooling
 
