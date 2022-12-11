@@ -22,12 +22,12 @@ pub async fn router() -> anyhow::Result<Router> {
 
     let router = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
-        .route_service("/repository", get(controller::get_all_repositories))
+        .route_service("/user/:user_name", post(controller::add_user))
         .route_service(
             "/repository/by/language",
             get(controller::get_all_repositories_by_language),
         )
-        .route_service("/repository/:owner/:repo", post(controller::add_repository))
+        .route_service("/repository", get(controller::get_all_repositories))
         .layer(Extension(shared_state));
 
     Ok(router)

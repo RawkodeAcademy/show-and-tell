@@ -45,23 +45,22 @@ async fn clean_tables() -> anyhow::Result<()> {
 }
 
 #[tokio::test]
-async fn test_add_repository() -> anyhow::Result<()> {
-    let get_repos_comtrya_comtrya = mockito::mock("GET", "/repos/comtrya/comtrya")
+async fn test_add_user() -> anyhow::Result<()> {
+    let get_users_icepuma_repos = mockito::mock("GET", "/users/icepuma/repos")
         .with_status(200)
-        .with_body_from_file("./fixtures/get_repos_comtrya_comtrya.json")
+        .with_body_from_file("./fixtures/get_users_icepuma_repos.json")
         .create();
 
     {
-
         let router = crate::router::router().await?;
         let client = TestClient::new(router);
 
-        let result = client.post("/repository/comtrya/comtrya").send().await;
+        let result = client.post("/user/icepuma").send().await;
 
         assert_eq!(result.status(), StatusCode::OK);
     }
 
-    get_repos_comtrya_comtrya.assert();
+    get_users_icepuma_repos.assert();
 
     clean_tables().await?;
 
@@ -88,23 +87,16 @@ async fn test_list_empty_repositories() -> anyhow::Result<()> {
 
 #[tokio::test]
 async fn test_list_repositories() -> anyhow::Result<()> {
-    let get_repos_comtrya_comtrya = mockito::mock("GET", "/repos/comtrya/comtrya")
+    let get_users_icepuma_repos = mockito::mock("GET", "/users/icepuma/repos")
         .with_status(200)
-        .with_body_from_file("./fixtures/get_repos_comtrya_comtrya.json")
-        .create();
-    let get_repos_icepuma_fbtoggl = mockito::mock("GET", "/repos/icepuma/fbtoggl")
-        .with_status(200)
-        .with_body_from_file("./fixtures/get_repos_icepuma_fbtoggl.json")
+        .with_body_from_file("./fixtures/get_users_icepuma_repos.json")
         .create();
 
     {
         let router = crate::router::router().await?;
         let client = TestClient::new(router);
 
-        let result = client.post("/repository/comtrya/comtrya").send().await;
-        assert_eq!(result.status(), StatusCode::OK);
-
-        let result = client.post("/repository/icepuma/fbtoggl").send().await;
+        let result = client.post("/user/icepuma").send().await;
         assert_eq!(result.status(), StatusCode::OK);
 
         let result = client.get("/repository").send().await;
@@ -113,11 +105,10 @@ async fn test_list_repositories() -> anyhow::Result<()> {
 
         let repositories = result.json::<Vec<Repository>>().await;
 
-        assert_eq!(repositories.len(), 2);
+        assert_eq!(repositories.len(), 15);
     }
 
-    get_repos_comtrya_comtrya.assert();
-    get_repos_icepuma_fbtoggl.assert();
+    get_users_icepuma_repos.assert();
 
     clean_tables().await?;
 
