@@ -1,0 +1,15 @@
+name: edgedb
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install EdgeDB
+        run: curl --proto '=https' --tlsv1.2 -sSf https://sh.edgedb.com | sh
+      - name: Setup database
+        working-directory: ./edgedb-vs-surrealdb/edgedb
+        run: ./setup.sh
