@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: install nextest
-        run: cargo install nextest
+        run: cargo install cargo-nextest
       - name: install EdgeDB
         run: |
           sudo mkdir -p /usr/local/share/keyrings
@@ -17,9 +17,6 @@ jobs:
           sudo apt-get update && sudo apt-get install edgedb-2
       - name: checkout
         uses: actions/checkout@v3
-      - name: setup database
-        working-directory: ./edgedb-vs-surrealdb/edgedb
-        run: ./setup.sh
       - name: run tests
         working-directory: ./edgedb-vs-surrealdb/edgedb
         run: cargo nextest run
