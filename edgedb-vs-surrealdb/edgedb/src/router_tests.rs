@@ -7,7 +7,7 @@ const EDGEDB_INSTANCE: &str = "router_tests";
 
 #[ctor::ctor]
 fn setup() {
-    std::env::set_var("RUST_LOG", "debug");
+    std::env::set_var("RUST_LOG", "info");
     std::env::set_var("EDGEDB_INSTANCE", EDGEDB_INSTANCE);
 
     let _ = env_logger::try_init();
