@@ -9,7 +9,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install EdgeDB
-        run: curl --proto '=https' --tlsv1.2 -sSf https://sh.edgedb.com | sh
+        run: |
+          sudo mkdir -p /usr/local/share/keyrings
+          sudo curl --proto '=https' --tlsv1.2 -sSf -o /usr/local/share/keyrings/edgedb-keyring.gpg https://packages.edgedb.com/keys/edgedb-keyring.gpg
+          echo deb [signed-by=/usr/local/share/keyrings/edgedb-keyring.gpg] https://packages.edgedb.com/apt $(grep "VERSION_CODENAME=" /etc/os-release | cut -d= -f2) main | sudo tee /etc/apt/sources.list.d/edgedb.list
+          sudo apt-get update && sudo apt-get install edgedb-2
       - name: Setup database
         working-directory: ./edgedb-vs-surrealdb/edgedb
         run: ./setup.sh
