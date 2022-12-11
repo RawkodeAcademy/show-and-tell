@@ -5,7 +5,7 @@ Showcase of EdgeDB
 ## Testing
 
 * `./setup.sh` to init project and run migrations
-* `PERSONAL_GITHUB_TOKEN=<personal github token> cargo run`
+* `cargo run`
 * `curl -XPOST http://localhost:1337/repository/comtrya/comtrya` to add `comtrya` to the database
   * `curl -XPOST http://localhost:1337/repository/<owner>/<repo>`
 * `curl http://localhost:1337/repository` to get all repositories
