@@ -7,8 +7,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: install nextest
-        run: cargo install cargo-nextest
       - name: install EdgeDB
         run: |
           sudo mkdir -p /usr/local/share/keyrings
@@ -19,4 +17,4 @@ jobs:
         uses: actions/checkout@v3
       - name: run tests
         working-directory: ./edgedb-vs-surrealdb/edgedb
-        run: cargo nextest run
+        run: cargo test
