@@ -16,8 +16,9 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3
       - name: cache
-        uses: Swatinem/rust-cache@v2          
+        uses: Swatinem/rust-cache@v2
       - name: check format and lint
+        working-directory: ./edgedb-vs-surrealdb/edgedb
         run: cargo fmt -- --check && cargo clippy --tests -- -Dwarnings
       - name: run tests
         working-directory: ./edgedb-vs-surrealdb/edgedb
