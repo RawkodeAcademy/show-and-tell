@@ -1,7 +1,11 @@
 use crate::{error::ApplicationError, model::Repository, ApplicationState};
 use axum::{extract::Path, Extension, Json};
 use edgedb_protocol::value::Value;
+use futures_util::TryStreamExt;
+use octocrab::FromResponse;
+use octocrab::Page;
 use std::sync::Arc;
+use tokio::pin;
 
 pub async fn get_all_repositories_by_language(
     Extension(state): Extension<Arc<ApplicationState>>,
@@ -33,15 +37,16 @@ pub async fn add_user(
 ) -> Result<(), ApplicationError> {
     state.edgedb.ensure_connected().await?;
 
-    let url = format!("{}users/{}/repos", state.octocrab.base_url, user_name);
-
+    let url = format!("{}users/{}/starred", state.octocrab.base_url, user_name);
     let request_builder = state.octocrab.request_builder(url, reqwest::Method::GET);
-
     let response = state.octocrab.execute(request_builder).await?;
 
-    let repositories = response.json::<Vec<octocrab::models::Repository>>().await?;
+    let page = <Page<octocrab::models::Repository>>::from_response(response).await?;
 
-    for repository in repositories {
+    let stream = page.into_stream(&state.octocrab);
+    pin!(stream);
+
+    while let Some(repository) = stream.try_next().await? {
         let query = r#"
             INSERT Repository {
                 name := <str>$0,
@@ -56,14 +61,17 @@ pub async fn add_user(
             .map(|language| language.replace('"', "")) // replace quotes from "serde_json::to_string"
             .unwrap_or_else(|| "not found".to_string());
 
-        state
+        match state
             .edgedb
             .query_single::<Value, _>(
                 query,
                 &(repository.name, repository.url.to_string(), language),
             )
-            .await?
-            .ok_or_else(|| anyhow::anyhow!("Failed to insert repository"))?;
+            .await
+        {
+            Ok(_) => {}
+            Err(_) => {}
+        }
     }
 
     Ok(())
