@@ -1,11 +1,14 @@
 use crate::{error::ApplicationError, model::Repository, ApplicationState};
 use axum::{extract::Path, Extension, Json};
+use edgedb_errors::ConstraintViolationError;
 use edgedb_protocol::value::Value;
 use futures_util::TryStreamExt;
 use octocrab::FromResponse;
 use octocrab::Page;
 use std::sync::Arc;
 use tokio::pin;
+use tracing::info;
+use tracing::warn;
 
 pub async fn get_all_repositories_by_language(
     Extension(state): Extension<Arc<ApplicationState>>,
@@ -46,6 +49,8 @@ pub async fn add_user(
     let stream = page.into_stream(&state.octocrab);
     pin!(stream);
 
+    let mut count = 0;
+
     while let Some(repository) = stream.try_next().await? {
         let query = r#"
             INSERT Repository {
@@ -65,14 +70,22 @@ pub async fn add_user(
             .edgedb
             .query_single::<Value, _>(
                 query,
-                &(repository.name, repository.url.to_string(), language),
+                &(&repository.name, repository.url.to_string(), language),
             )
             .await
         {
-            Ok(_) => {}
-            Err(_) => {}
+            Ok(_) => {
+                count += 1;
+            }
+            Err(err) => {
+                if err.is::<ConstraintViolationError>() {
+                    warn!("Repository already exists: {}", repository.name);
+                }
+            }
         }
     }
+
+    info!("Added {} starred repositories from {}.", count, user_name);
 
     Ok(())
 }

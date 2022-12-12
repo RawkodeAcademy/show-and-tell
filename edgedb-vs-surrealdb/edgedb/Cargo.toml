@@ -12,11 +12,15 @@ reqwest = "0.11.13"
 edgedb-tokio = "0.3.0"
 edgedb-derive = "0.4.0"
 edgedb-protocol = "0.4.0"
+edgedb-errors = "0.3.0"
 serde = "1.0.149"
 serde_json = "1.0.89"
 serde_derive = "1.0.149"
 uuid = { version = "1.2.2", features = ["serde", "v4"] }
 futures-util = "0.3.25"
+tracing = "0.1.37"
+tracing-subscriber = { version = "0.3.16", features = ["env-filter"] }
+tower-http = { version = "0.3.5", features = ["trace"] }
 
 [dev-dependencies]
 env_logger = "0.10.0"
