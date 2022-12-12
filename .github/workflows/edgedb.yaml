@@ -15,6 +15,10 @@ jobs:
           sudo apt-get update && sudo apt-get install edgedb-2
       - name: checkout
         uses: actions/checkout@v3
+      - name: cache
+        uses: Swatinem/rust-cache@v2          
+      - name: check format and lint
+        run: cargo fmt -- --check && cargo clippy --tests -- -Dwarnings
       - name: run tests
         working-directory: ./edgedb-vs-surrealdb/edgedb
         run: cargo test
