@@ -5,6 +5,7 @@ use axum::{
 };
 use std::sync::Arc;
 use tower_http::trace::TraceLayer;
+use tracing::{info, warn};
 
 pub async fn router() -> anyhow::Result<Router> {
     #[cfg(not(test))]
@@ -13,10 +14,17 @@ pub async fn router() -> anyhow::Result<Router> {
     #[cfg(test)]
     let base_url = mockito::server_url();
 
-    let octocrab = octocrab::OctocrabBuilder::new()
-        .base_url(base_url)?
-        .personal_token("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".to_string())
-        .build()?;
+    let mut octocrab_builder = octocrab::OctocrabBuilder::new().base_url(base_url)?;
+
+    if let Ok(personal_token) = std::env::var("GITHUB_TOKEN") {
+        info!("Using GitHub personal token from GITHUB_TOKEN environment variable.");
+
+        octocrab_builder = octocrab_builder.personal_token(personal_token);
+    } else {
+        warn!("GITHUB_TOKEN environment variable not found. Using GitHub API without authentication. This is rate limited.");
+    }
+
+    let octocrab = octocrab_builder.build()?;
 
     let edgedb = edgedb_tokio::create_client().await?;
 

@@ -18,3 +18,5 @@ jobs:
       - name: run tests
         working-directory: ./edgedb-vs-surrealdb/edgedb
         run: cargo test
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
