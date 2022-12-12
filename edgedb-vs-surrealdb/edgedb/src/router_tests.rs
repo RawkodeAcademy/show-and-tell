@@ -46,6 +46,8 @@ async fn clean_tables() -> anyhow::Result<()> {
 
 #[tokio::test]
 async fn test_add_user() -> anyhow::Result<()> {
+    clean_tables().await?;
+
     let get_users_icepuma_starred = mockito::mock("GET", "/users/icepuma/starred")
         .with_status(200)
         .with_body_from_file("./fixtures/get_users_icepuma_starred.json")
@@ -62,13 +64,13 @@ async fn test_add_user() -> anyhow::Result<()> {
 
     get_users_icepuma_starred.assert();
 
-    clean_tables().await?;
-
     Ok(())
 }
 
 #[tokio::test]
 async fn test_list_empty_repositories() -> anyhow::Result<()> {
+    clean_tables().await?;
+
     let router = crate::router::router().await?;
     let client = TestClient::new(router);
 
@@ -80,13 +82,13 @@ async fn test_list_empty_repositories() -> anyhow::Result<()> {
 
     assert_eq!(repositories, vec![]);
 
-    clean_tables().await?;
-
     Ok(())
 }
 
 #[tokio::test]
 async fn test_list_repositories() -> anyhow::Result<()> {
+    clean_tables().await?;
+
     let get_users_icepuma_starred = mockito::mock("GET", "/users/icepuma/starred")
         .with_status(200)
         .with_body_from_file("./fixtures/get_users_icepuma_starred.json")
@@ -109,8 +111,6 @@ async fn test_list_repositories() -> anyhow::Result<()> {
     }
 
     get_users_icepuma_starred.assert();
-
-    clean_tables().await?;
 
     Ok(())
 }

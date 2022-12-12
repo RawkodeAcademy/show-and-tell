@@ -24,6 +24,6 @@ jobs:
         run: cargo fmt -- --check && cargo clippy --tests -- -Dwarnings
       - name: run tests
         working-directory: ./edgedb-vs-surrealdb/edgedb
-        run: cargo test
+        run: cargo test -- --test-threads=1 # table cleanup only works when tests are run sequentially
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

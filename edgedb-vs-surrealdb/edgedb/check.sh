@@ -3,4 +3,4 @@ set -euo pipefail
 
 cargo fmt
 cargo clippy --tests
-cargo test
+cargo test -- --test-threads=1 # table cleanup only works when tests are run sequentially

@@ -1,5 +1,6 @@
 use axum::response::{IntoResponse, Response};
 use reqwest::StatusCode;
+use tracing::error;
 
 pub struct ApplicationError(anyhow::Error);
 
@@ -14,10 +15,8 @@ where
 
 impl IntoResponse for ApplicationError {
     fn into_response(self) -> Response {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Something went wrong: {}", self.0),
-        )
-            .into_response()
+        error!("Application error: {}", self.0);
+
+        StatusCode::INTERNAL_SERVER_ERROR.into_response()
     }
 }
